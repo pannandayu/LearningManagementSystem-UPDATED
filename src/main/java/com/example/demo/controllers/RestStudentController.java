@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,6 @@ public class RestStudentController {
     private ModuleService moduleService;
     @Autowired
     private ProgressService progressService;
-    @Autowired
-    private CourseRepository courseRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
@@ -63,6 +62,71 @@ public class RestStudentController {
         return ResponseEntity.status(HttpStatus.OK).body(employeeService.getFinishedCourseData(employee.getId()));
     }
 
+    @GetMapping("/info/finished-course/course-{courseId}/segment")
+    @ResponseBody
+    public ResponseEntity<?>
+    getFinishedSegment(@PathVariable("courseId") Integer courseId, Authentication authentication) {
+        String email = authentication.getName();
+        Employee employee = employeeService.findEmployeeByEmail(email);
+        Boolean finishStatus = employeeCourseService.getFinishStatusByEmployeeId(employee.getId(), courseId);
+
+        if(finishStatus == null || !finishStatus) {
+            finishStatus = false;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course is not finished yet");
+        }
+         return ResponseEntity.status(HttpStatus.OK).body(segmentRepository.findSegmentByCourseId(courseId));
+    }
+
+    @GetMapping("/info/finished-course/course-{courseId}/segment-{segmentId}/module")
+    @ResponseBody
+    public ResponseEntity<?>
+    getFinishedModule(@PathVariable("courseId") Integer courseId,
+                      @PathVariable("segmentId") Integer segmentId,
+                      Authentication authentication) {
+        String email = authentication.getName();
+        Employee employee = employeeService.findEmployeeByEmail(email);
+        Boolean finishStatus = employeeCourseService.getFinishStatusByEmployeeId(employee.getId(), courseId);
+
+        List<Integer> segmentIdRange = segmentService.filterSegmentIdRange(courseId);
+
+        if(finishStatus == null || !finishStatus) {
+            finishStatus = false;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Don't even try to bypassing bro");
+        }
+            if(finishStatus && segmentId >= segmentIdRange.get(0) && segmentId <= segmentIdRange.get(1)) {
+                return ResponseEntity.status(HttpStatus.OK).body(moduleService.getModuleBySegmentId(segmentId));
+            }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Segment Id might be invalid");
+    }
+
+    @GetMapping("/info/finished-course/course-{courseId}/segment-{segmentId}/module-{moduleId}/start")
+    @ResponseBody
+    public ResponseEntity<?>
+    reLearnModule(@PathVariable("courseId") Integer courseId,
+                  @PathVariable("segmentId") Integer segmentId,
+                  @PathVariable("moduleId") Integer moduleId,
+                  Authentication authentication) {
+        String email = authentication.getName();
+        Employee employee = employeeService.findEmployeeByEmail(email);
+        Boolean finishStatus = employeeCourseService.getFinishStatusByEmployeeId(employee.getId(), courseId);
+
+        List<Integer> segmentIdRange = segmentService.filterSegmentIdRange(courseId);
+        List<Integer> moduleIdRange = moduleService.filterModuleIdRange(segmentId);
+
+        if(finishStatus == null || !finishStatus) {
+            finishStatus = false;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Good effort bro, don't even try");
+        }
+        if(finishStatus
+                && segmentId >= segmentIdRange.get(0) && segmentId <= segmentIdRange.get(1)
+                && moduleId >= moduleIdRange.get(0) && moduleId <= moduleIdRange.get(1)) {
+            return ResponseEntity.status(HttpStatus.OK).body("happy learning");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Module Id might be invalid");
+    }
+
+
+
     // ONGOING COURSE PART //
     @GetMapping("/info/ongoing-course")
     @ResponseBody
@@ -83,13 +147,7 @@ public class RestStudentController {
         return ResponseEntity.status(HttpStatus.OK).body(employeeService.getModuleProgress(employee.getId()));
     }
 
-    // COURSE LEARNING PART
-
-//    @GetMapping("/info/ongoing-course/{id}")
-//    public ResponseEntity<List<LearningCourseResponseDTO>>
-//    getCourseByIdEmployee(@PathVariable(required = true) Integer id){
-//        return ResponseEntity.ok(employeeCourseService.getCourseByEmployeeIdDTO(id));
-//    }
+    // ONGOING COURSE LEARNING PART
 
     @GetMapping("/info/ongoing-course/segment")
     public ResponseEntity<List<Segment>> getSegment(Authentication authentication){
@@ -100,16 +158,16 @@ public class RestStudentController {
     }
 
     @GetMapping("/info/ongoing-course/segment-{segmentId}/module")
-    public ResponseEntity<List<Module>> getModule(@PathVariable("segmentId") Integer segmentId, Authentication authentication){
+    public ResponseEntity<?> getModule(@PathVariable("segmentId") Integer segmentId, Authentication authentication){
         String email = authentication.getName();
         Employee employee = employeeService.findEmployeeByEmail(email);
         Integer courseId = employeeCourseService.getCourseIdByEmployeeId(employee.getId());
         List<Integer> segmentIdRange = segmentService.filterSegmentIdRange(courseId);
 
-        if(segmentId > segmentIdRange.get(1) || segmentId < segmentIdRange.get(0)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if(segmentId >= segmentIdRange.get(0) && segmentId <= segmentIdRange.get(1)) {
+            return ResponseEntity.status(HttpStatus.OK).body(moduleService.getModuleBySegmentId(segmentId));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(moduleService.getModuleBySegmentId(segmentId));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Segment Id might be Invalid");
     }
 
     @PostMapping("/info/ongoing-course/segment-{segmentId}/module-{moduleId}/start")
@@ -124,7 +182,7 @@ public class RestStudentController {
         List<Integer> moduleIdRange = moduleService.filterModuleIdRange(segmentId);
 
         if (empProgress == null) {
-            if(moduleId <= moduleIdRange.get(1) && moduleId >= moduleIdRange.get(0)) {
+            if(moduleId >= moduleIdRange.get(0) && moduleId <= moduleIdRange.get(1)) {
                 Module module = new Module();
                 Progress prog = new Progress();
                 module.setId(moduleId);
@@ -135,7 +193,7 @@ public class RestStudentController {
                 return ResponseEntity.status(HttpStatus.OK).body(progressService.saveProgress(prog));
             }
             else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Module Id might be invalid");
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.getModuleById(moduleId));
@@ -160,7 +218,7 @@ public class RestStudentController {
             Integer moduleFinished = employeeRepository.totalModuleFinished(employee.getId());
             if (Objects.equals(moduleFinished, courseModule)) {
                 employeeRepository.updateCourseStudent(true,employee.getId(),courseId);
-                return ResponseEntity.status(HttpStatus.OK).body("Course Finished");
+                return ResponseEntity.status(HttpStatus.OK).body("Course Finished, Congrats!");
             }
             return ResponseEntity.status(HttpStatus.OK).body("Module Finished");
         }

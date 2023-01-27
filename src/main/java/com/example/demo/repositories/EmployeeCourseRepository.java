@@ -46,4 +46,11 @@ public interface EmployeeCourseRepository extends JpaRepository<EmployeeCourse, 
             where employee_id = ?1 and course_id = ?2
             """, nativeQuery = true)
     public void updateCourseFinished(Integer empId, Integer courseId);
+
+    @Query(value = """
+           select status
+           from tb_tr_employeecourse tte
+           where employee_id = ?1 and course_id = ?2
+            """, nativeQuery = true)
+    public Boolean getFinishStatusByEmployeeId(Integer empId, Integer courseId);
 }

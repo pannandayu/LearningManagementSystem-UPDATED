@@ -72,7 +72,7 @@ public class RestTrainerController {
         return ResponseEntity.status(HttpStatus.OK).body(courseService.getAll());
     }
 
-    // update course from 0 -> 1
+//    update course from 0 -> 1
 //    @PutMapping("/course/update-course/{empId}")
 //    @Transactional
 //    public ResponseEntity<String> updateCourse(

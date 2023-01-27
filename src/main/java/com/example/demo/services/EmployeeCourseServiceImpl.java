@@ -132,5 +132,10 @@ public class EmployeeCourseServiceImpl implements EmployeeCourseService{
         return 1;
     }
 
+    @Override
+    public Boolean getFinishStatusByEmployeeId(Integer empId, Integer courseId) {
+        return employeeCourseRepository.getFinishStatusByEmployeeId(empId, courseId);
+    }
+
 
 }

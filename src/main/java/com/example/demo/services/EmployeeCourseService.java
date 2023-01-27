@@ -25,4 +25,5 @@ public interface EmployeeCourseService {
     public List<Module> getModuleBySegmentId(Integer id);
     public Integer getCourseIdByEmployeeId(Integer empId);
     public Integer updateCourseFinished(Integer empId, Integer courseId);
+    public Boolean getFinishStatusByEmployeeId(Integer empId, Integer courseId);
 }
