@@ -114,11 +114,12 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public List<List<FinishedCourseResponseDTO>> getFinishedCourseData(Integer id) {
+    public List<FinishedCourseResponseDTO> getFinishedCourseData(Integer id) {
         return employeeRepository
                 .findById(id)
                 .stream()
                 .map(this::convertFinishedCourseDataToDTO)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 

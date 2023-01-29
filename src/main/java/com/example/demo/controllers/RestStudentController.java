@@ -55,7 +55,7 @@ public class RestStudentController {
     // FINISHED COURSE PART //
     @GetMapping("/info/finished-course")
     @ResponseBody
-    public ResponseEntity<List<List<FinishedCourseResponseDTO>>>
+    public ResponseEntity<?>
     getCourseInfo(Authentication authentication) {
         String email = authentication.getName();
         Employee employee = employeeService.findEmployeeByEmail(email);
@@ -120,7 +120,7 @@ public class RestStudentController {
         if(finishStatus
                 && segmentId >= segmentIdRange.get(0) && segmentId <= segmentIdRange.get(1)
                 && moduleId >= moduleIdRange.get(0) && moduleId <= moduleIdRange.get(1)) {
-            return ResponseEntity.status(HttpStatus.OK).body("happy learning");
+            return ResponseEntity.status(HttpStatus.OK).body("Happy learning");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Module Id might be invalid");
     }
@@ -167,7 +167,7 @@ public class RestStudentController {
         if(segmentId >= segmentIdRange.get(0) && segmentId <= segmentIdRange.get(1)) {
             return ResponseEntity.status(HttpStatus.OK).body(moduleService.getModuleBySegmentId(segmentId));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Segment Id might be Invalid");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Segment Id might be invalid");
     }
 
     @PostMapping("/info/ongoing-course/segment-{segmentId}/module-{moduleId}/start")
@@ -217,7 +217,7 @@ public class RestStudentController {
             progressService.changeIsfinished(moduleId, employee.getId());
             Integer moduleFinished = employeeRepository.totalModuleFinished(employee.getId());
             if (Objects.equals(moduleFinished, courseModule)) {
-                employeeRepository.updateCourseStudent(true,employee.getId(),courseId);
+                employeeService.updateCourseStudent(true, employee.getId(), courseId);
                 return ResponseEntity.status(HttpStatus.OK).body("Course Finished, Congrats!");
             }
             return ResponseEntity.status(HttpStatus.OK).body("Module Finished");

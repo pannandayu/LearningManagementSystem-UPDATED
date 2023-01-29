@@ -25,6 +25,6 @@ public interface EmployeeService {
     String getOngoingCourseDescription(String courseName);
     Integer totalModuleFinished(Integer id);
     Employee findById(Integer id);
-    List<List<FinishedCourseResponseDTO>> getFinishedCourseData(Integer id);
+    List<FinishedCourseResponseDTO> getFinishedCourseData(Integer id);
     void insertCourseStudent(Integer empId, Integer courseId, Boolean status, LocalDate startDate, LocalDate endDate);
 }
