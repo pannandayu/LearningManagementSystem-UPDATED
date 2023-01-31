@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/learning-course")
+@RequestMapping("/api/learning-course")
 public class RestLearningCourseController {
     @Autowired
-    EmployeeCourseService employeeCourseService;
+    private EmployeeCourseService employeeCourseService;
     @Autowired
-    EmployeeService employeeService;
+    private EmployeeService employeeService;
     @Autowired
     private SegmentService segmentService;
     @Autowired

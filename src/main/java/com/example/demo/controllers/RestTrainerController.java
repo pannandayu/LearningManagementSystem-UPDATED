@@ -21,7 +21,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/trainer")
+@RequestMapping("/api/trainer")
 public class RestTrainerController {
 
     @Autowired

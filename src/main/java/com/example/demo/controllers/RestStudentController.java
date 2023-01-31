@@ -1,10 +1,8 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.*;
-import com.example.demo.models.Employee;
+import com.example.demo.models.*;
 import com.example.demo.models.Module;
-import com.example.demo.models.Progress;
-import com.example.demo.models.Segment;
 import com.example.demo.repositories.CourseRepository;
 import com.example.demo.repositories.EmployeeCourseRepository;
 import com.example.demo.repositories.EmployeeRepository;
@@ -24,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/student")
 public class RestStudentController {
 
     @Autowired
@@ -50,6 +48,13 @@ public class RestStudentController {
         String email = authentication.getName();
         Employee employee = employeeService.findEmployeeByEmail(email);
         return ResponseEntity.ok().body(employeeService.getById(employee.getId()));
+    }
+
+    @GetMapping("/learning-course")
+    public List<LearningCourseResponseDTO> getCourse(Authentication authentication) {
+        String email = authentication.getName();
+        Employee employee = employeeService.findEmployeeByEmail(email);
+        return employeeCourseService.getCourseByEmployeeIdDTO(employee.getId());
     }
 
     // FINISHED COURSE PART //
