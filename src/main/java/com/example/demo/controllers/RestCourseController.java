@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/api/course")
 public class RestCourseController {
     @Autowired
-    CourseService courseService;
+    private CourseService courseService;
 
     @Autowired
-    EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     @Autowired
-    EmployeeCourseService employeeCourseService;
+    private EmployeeCourseService employeeCourseService;
 
 
     @GetMapping

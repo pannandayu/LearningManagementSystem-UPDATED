@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/home")
+@RequestMapping("/api/home")
 
 public class HomeController {
 
