@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,12 +51,17 @@ public class EmployeeCourseServiceImpl implements EmployeeCourseService{
 
     @Override
     @Transactional
-    public Boolean save(AssignCourseRequestDTO dto, Integer empId) {
+    public Boolean save(AssignCourseRequestDTO dto, Integer courseId) {
         dto.setStatus(false);
-        dto.setEmpId(empId);
+        dto.setStartDate(LocalDate.parse("2022-01-01"));
+        dto.setEndDate(LocalDate.parse("2022-03-01"));
+        Integer empId = employeeRepository.getIdByName(dto.getName());
+        if (empId == null) {
+            return false;
+        }
         employeeRepository.insertCourseStudent(
-                dto.getEmpId(),
-                dto.getCourseId(),
+                empId,
+                courseId,
                 dto.getStatus(),
                 dto.getStartDate(),
                 dto.getEndDate());

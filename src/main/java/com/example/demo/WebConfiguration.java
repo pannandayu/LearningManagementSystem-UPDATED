@@ -10,11 +10,22 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-public class WebConfiguration {
+public class WebConfiguration implements WebMvcConfigurer{
+
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET","POST","PUT","DELETE","HEAD")
+                .allowCredentials(true);
+        WebMvcConfigurer.super.addCorsMappings(registry);
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -25,21 +36,21 @@ public class WebConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf()
-                .disable()
-                .authorizeRequests((auth) ->
-                        auth
-                                .antMatchers("/student/**").hasAuthority("false")
-                                .antMatchers("/trainer/**").hasAuthority("true")
-                                .anyRequest()
-                                .authenticated()
-                )
-                .formLogin((login) ->
-                        login
-                                .loginPage("/home")
-                                .permitAll())
-                .logout(LogoutConfigurer::permitAll)
-                .httpBasic();
+            .csrf()
+            .disable()
+            .authorizeRequests((auth) ->
+                auth
+                        .antMatchers("/**").permitAll()
+                        .antMatchers("/trainers/**").permitAll()
+                        .anyRequest()
+                        .authenticated()
+            )
+            .formLogin((login) ->
+                    login
+                            .loginPage("/home")
+                            .permitAll())
+            .logout(LogoutConfigurer::permitAll)
+            .httpBasic();
         return http.build();
     }
 

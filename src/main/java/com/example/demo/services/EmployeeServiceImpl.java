@@ -249,4 +249,32 @@ public class EmployeeServiceImpl implements EmployeeService{
         employeeRepository.updateCourseStudent(status, empId, courseId);
     }
 
+    @Override
+    public List<AssignedEmployeeDTO> getUnassignEmployees(Integer id) {
+        List<Employee> unassignedEmployees = employeeRepository.getStudent();
+        List<AssignedEmployeeDTO> employeesdto = new ArrayList<>();
+        for (Employee employee : unassignedEmployees) {
+            AssignedEmployeeDTO assignedEmployeeDTO = new AssignedEmployeeDTO();
+            assignedEmployeeDTO.name = employee.getFullname();
+            assignedEmployeeDTO.id = employee.getId();
+            employeesdto.add(assignedEmployeeDTO);
+        }
+        
+        return employeesdto;
+    }
+
+    @Override
+    public List<AssignedEmployeeDTO> getAssignedEmployees(Integer id) {
+        List<Employee> assignedEmployees = employeeRepository.getAssignedEmployee(id);
+        List<AssignedEmployeeDTO> employeesdto = new ArrayList<>();
+        for (Employee employee : assignedEmployees) {
+            AssignedEmployeeDTO assignedEmployeeDTO = new AssignedEmployeeDTO();
+            assignedEmployeeDTO.name = employee.getFullname();
+            assignedEmployeeDTO.id = employee.getId();
+            employeesdto.add(assignedEmployeeDTO);
+        }
+        
+        return employeesdto;
+    }
+
 }

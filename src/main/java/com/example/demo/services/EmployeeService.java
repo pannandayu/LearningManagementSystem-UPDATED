@@ -27,4 +27,7 @@ public interface EmployeeService {
     Employee findById(Integer id);
     List<FinishedCourseResponseDTO> getFinishedCourseData(Integer id);
     void insertCourseStudent(Integer empId, Integer courseId, Boolean status, LocalDate startDate, LocalDate endDate);
+
+    List<AssignedEmployeeDTO> getUnassignEmployees(Integer id);
+    List<AssignedEmployeeDTO> getAssignedEmployees(Integer id);
 }

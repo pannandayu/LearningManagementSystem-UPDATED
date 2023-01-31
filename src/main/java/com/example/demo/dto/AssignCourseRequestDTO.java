@@ -10,8 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class AssignCourseRequestDTO {
-    private Integer empId;
-    private Integer courseId;
+    private String name;
     private Boolean status;
     private LocalDate startDate;
     private LocalDate endDate;
