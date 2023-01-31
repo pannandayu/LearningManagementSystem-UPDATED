@@ -148,4 +148,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
             where employee_id = ?1
             """, nativeQuery = true)
     Integer totalModuleFinished(Integer id);
+
+    @Query(value = "SELECT e.* from tb_tr_employee e WHERE e.istrainer = 0", nativeQuery = true)
+    List<Employee> getStudent();
+
+    @Query(value = "SELECT e.* from tb_tr_employee e JOIN tb_tr_employeecourse ec ON ec.employee_id = e.id WHERE ec.status = 0 AND e.istrainer = 0 AND ec.course_id = ?", nativeQuery = true)
+    List<Employee> getAssignedEmployee(Integer id);
+
+    @Query(value = "SELECT id from tb_tr_employee WHERE fullname = ?", nativeQuery = true)
+    Integer getIdByName(String name);
 }

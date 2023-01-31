@@ -33,6 +33,7 @@ public class Employee {
     @Column(name = "istrainer", nullable = false)
     private Boolean Istrainer;
 
+    
     @OneToOne
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user;

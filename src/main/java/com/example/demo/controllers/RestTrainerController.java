@@ -83,13 +83,25 @@ public class RestTrainerController {
 //    }
 
     // insert / assign course
-    @PostMapping("/course/assign-course/{empId}")
+    @PostMapping("/course/assign-course/{courseId}")
     public ResponseEntity<String> assignCourse(
-            @PathVariable("empId") Integer empId,
+            @PathVariable("courseId") Integer id,
             @RequestBody AssignCourseRequestDTO dto) {
-        employeeCourseService.save(dto, empId);
+        employeeCourseService.save(dto, id);
         return ResponseEntity.status(HttpStatus.OK).body("Assign Course Success");
     }
 
     // buat path check employee progress di ongoing course
+    
+    @GetMapping("/course/{courseId}/unassigned")
+    public List<AssignedEmployeeDTO> getUnassignedEmployees(@PathVariable("courseId") Integer id){
+
+        return employeeService.getUnassignEmployees(id);
+    }
+
+    @GetMapping("/course/{courseId}/assigned")
+    public List<AssignedEmployeeDTO> getAssignedEmployees(@PathVariable("courseId") Integer id){
+
+        return employeeService.getAssignedEmployees(id);
+    }
 }
